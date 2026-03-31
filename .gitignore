@@ -1,0 +1,94 @@
+# ========================
+# Visual Studio
+# ========================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docobj
+*.userprefs
+*.pidb
+.vscode/
+*.code-workspace
+
+# ========================
+# .NET Build Output
+# ========================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+out/
+publish/
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.meta
+
+# ========================
+# NuGet
+# ========================
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+nuget.config
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ========================
+# ASP.NET Core
+# ========================
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+launchSettings.json
+
+# ========================
+# Secrets & Environment
+# ========================
+*.env
+.env
+.env.*
+secrets.json
+**/secrets.json
+**/*secrets*.json
+**/*secret*.json
+
+# ========================
+# Database
+# ========================
+*.mdf
+*.ldf
+*.ndf
+*.sqlite
+*.sqlite3
+*.db
+
+# ========================
+# OS Generated Files
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ========================
+# Temporary Files
+# ========================
+*.tmp
+*.temp
+*.cache
+*.bak
+*.swp
+
+# ========================
+# Test Results
+# ========================
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+*.trx
