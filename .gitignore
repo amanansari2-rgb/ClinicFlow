@@ -42,7 +42,7 @@ artifacts/
 # ASP.NET Core
 # ========================
 appsettings.Development.json
-appsettings.*.json
+appsettings.json
 !appsettings.json
 launchSettings.json
 
