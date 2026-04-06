@@ -42,8 +42,7 @@ artifacts/
 # ASP.NET Core
 # ========================
 appsettings.Development.json
-ClinicFlow-Backend/appsettings.json
-!appsettings.json
+appsettings.json
 launchSettings.json
 
 # ========================
