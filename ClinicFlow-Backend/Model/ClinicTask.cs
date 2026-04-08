@@ -11,7 +11,7 @@ namespace ClinicFlow_Backend.Model
 
         [Required]
         public Guid AssignedTo { get; set; }
-        // FK → Identity (responsible user)
+        // FK → User (responsible user)
 
         [MaxLength(50)]
         public string? RelatedEntityID { get; set; }
@@ -37,6 +37,6 @@ namespace ClinicFlow_Backend.Model
 
         // Navigation
         [ForeignKey(nameof(AssignedTo))]
-        public Identity AssignedToUser { get; set; } = null!;
+        public User AssignedToUser { get; set; } = null!;
     }
 }

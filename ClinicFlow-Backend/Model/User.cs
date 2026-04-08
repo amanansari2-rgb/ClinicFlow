@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClinicFlow_Backend.Model
 {
-    public class Identity
+    public class User
     {
         [Key]
         public Guid UserID { get; set; } = Guid.NewGuid();

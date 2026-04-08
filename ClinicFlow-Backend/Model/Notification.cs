@@ -10,7 +10,7 @@ namespace ClinicFlow_Backend.Model
 
         [Required]
         public Guid UserID { get; set; }
-        // FK → Identity (recipient)
+        // FK → User (recipient)
 
         [MaxLength(50)]
         public string? EntityID { get; set; }
@@ -37,6 +37,6 @@ namespace ClinicFlow_Backend.Model
 
         // Navigation
         [ForeignKey(nameof(UserID))]
-        public Identity User { get; set; } = null!;
+        public User User { get; set; } = null!;
     }
 }

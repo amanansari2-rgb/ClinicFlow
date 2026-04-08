@@ -10,7 +10,7 @@ namespace ClinicFlow_Backend.Model
 
         [Required]
         public Guid UserID { get; set; }
-        // FK → Identity
+        // FK → User
 
         [Required, MaxLength(30)]
         public string MRN { get; set; } = string.Empty;
@@ -43,7 +43,7 @@ namespace ClinicFlow_Backend.Model
 
         // Navigation
         [ForeignKey(nameof(UserID))]
-        public Identity User { get; set; } = null!;
+        public User User { get; set; } = null!;
 
         public ICollection<IntakeForm> IntakeForms { get; set; } = [];
         public ICollection<Appointment> Appointments { get; set; } = [];

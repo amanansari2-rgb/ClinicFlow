@@ -21,7 +21,7 @@ namespace ClinicFlow_Backend.Model
 
         [Required]
         public Guid GeneratedBy { get; set; }
-        // FK → Identity
+        // FK → User
 
         public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
 
@@ -31,6 +31,6 @@ namespace ClinicFlow_Backend.Model
 
         // Navigation
         [ForeignKey(nameof(GeneratedBy))]
-        public Identity GeneratedByUser { get; set; } = null!;
+        public User GeneratedByUser { get; set; } = null!;
     }
 }

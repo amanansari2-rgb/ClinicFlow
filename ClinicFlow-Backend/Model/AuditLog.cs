@@ -30,6 +30,6 @@ namespace ClinicFlow_Backend.Model
 
         // Navigation
         [ForeignKey(nameof(UserID))]
-        public Identity User { get; set; } = null!;
+        public User User { get; set; } = null!;
     }
 }

@@ -4,6 +4,7 @@ using ClinicFlow_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicFlow_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260407164125_testing")]
+    partial class testing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,6 +325,61 @@ namespace ClinicFlow_Backend.Migrations
                     b.HasIndex("ProviderID");
 
                     b.ToTable("Encounters");
+                });
+
+            modelBuilder.Entity("ClinicFlow_Backend.Model.Identity", b =>
+                {
+                    b.Property<Guid>("UserID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Active");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.HasKey("UserID");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Identities");
                 });
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.IntakeForm", b =>
@@ -811,61 +869,6 @@ namespace ClinicFlow_Backend.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("ClinicFlow_Backend.Model.User", b =>
-                {
-                    b.Property<Guid>("UserID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("UserID");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("ClinicFlow_Backend.Model.Waitlist", b =>
                 {
                     b.Property<Guid>("WaitID")
@@ -932,7 +935,7 @@ namespace ClinicFlow_Backend.Migrations
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.AuditLog", b =>
                 {
-                    b.HasOne("ClinicFlow_Backend.Model.User", "User")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "User")
                         .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -954,7 +957,7 @@ namespace ClinicFlow_Backend.Migrations
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.ClinicTask", b =>
                 {
-                    b.HasOne("ClinicFlow_Backend.Model.User", "AssignedToUser")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "AssignedToUser")
                         .WithMany()
                         .HasForeignKey("AssignedTo")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1014,7 +1017,7 @@ namespace ClinicFlow_Backend.Migrations
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.Notification", b =>
                 {
-                    b.HasOne("ClinicFlow_Backend.Model.User", "User")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "User")
                         .WithMany()
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1031,7 +1034,7 @@ namespace ClinicFlow_Backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ClinicFlow_Backend.Model.User", "OrderedByUser")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "OrderedByUser")
                         .WithMany()
                         .HasForeignKey("OrderedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1044,7 +1047,7 @@ namespace ClinicFlow_Backend.Migrations
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.Patient", b =>
                 {
-                    b.HasOne("ClinicFlow_Backend.Model.User", "User")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "User")
                         .WithOne()
                         .HasForeignKey("ClinicFlow_Backend.Model.Patient", "UserID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1078,7 +1081,7 @@ namespace ClinicFlow_Backend.Migrations
                         .WithMany("Providers")
                         .HasForeignKey("ClinicID");
 
-                    b.HasOne("ClinicFlow_Backend.Model.User", "User")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "User")
                         .WithOne()
                         .HasForeignKey("ClinicFlow_Backend.Model.Provider", "UserID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1115,7 +1118,7 @@ namespace ClinicFlow_Backend.Migrations
 
             modelBuilder.Entity("ClinicFlow_Backend.Model.Report", b =>
                 {
-                    b.HasOne("ClinicFlow_Backend.Model.User", "GeneratedByUser")
+                    b.HasOne("ClinicFlow_Backend.Model.Identity", "GeneratedByUser")
                         .WithMany()
                         .HasForeignKey("GeneratedBy")
                         .OnDelete(DeleteBehavior.Restrict)

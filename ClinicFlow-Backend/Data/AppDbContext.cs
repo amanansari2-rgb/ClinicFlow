@@ -8,7 +8,7 @@ namespace ClinicFlow_Backend.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // ── 5.1 Identity & Access Management ────────────────────────────
-        public DbSet<Identity> Identities { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
 
         // ── 5.2 Patient Registry & Intake ───────────────────────────────
@@ -47,8 +47,8 @@ namespace ClinicFlow_Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // ── Identity ─────────────────────────────────────────────────
-            modelBuilder.Entity<Identity>(e =>
+            // ── User ──────────────────────────────────────────────────────
+            modelBuilder.Entity<User>(e =>
             {
                 e.HasIndex(x => x.Email).IsUnique();
                 e.Property(x => x.Status).HasDefaultValue("Active");
