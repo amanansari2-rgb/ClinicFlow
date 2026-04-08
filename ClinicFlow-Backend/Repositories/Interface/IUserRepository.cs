@@ -1,6 +1,6 @@
 using ClinicFlow_Backend.Model;
 
-namespace ClinicFlow_Backend.Repositories
+namespace ClinicFlow_Backend.Repositories.Interface
 {
     public interface IUserRepository
     {

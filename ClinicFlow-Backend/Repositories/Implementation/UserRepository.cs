@@ -1,8 +1,9 @@
 using ClinicFlow_Backend.Data;
 using ClinicFlow_Backend.Model;
+using ClinicFlow_Backend.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace ClinicFlow_Backend.Repositories
+namespace ClinicFlow_Backend.Repositories.Implementation
 {
     public class UserRepository : IUserRepository
     {
