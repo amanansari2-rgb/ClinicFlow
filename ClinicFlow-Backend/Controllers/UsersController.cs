@@ -1,5 +1,8 @@
 using ClinicFlow_Backend.Data;
+using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
+using ClinicFlow_Backend.Repositories.Interface;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,51 +12,51 @@ namespace ClinicFlow_Backend.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUserRepository _repository;
 
-        public UsersController(AppDbContext context)
+        public UsersController(IUserRepository Repository)
         {
-            _context = context;
+            _repository = Repository;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var Users =  await _repository.GetUsersAsync();
+            return Ok(Users.Select(u => MapToDto(u)));
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _repository.GetUserAsync(id);
 
             if (user == null)
                 return NotFound();
 
-            return user;
+            return Ok(MapToDto(user));
         }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public async Task<IActionResult> PutUser(Guid id, UpdateUserDto dto)
         {
-            if (id != user.UserID)
-                return BadRequest();
+            var existing = await _repository.GetUserAsync(id);
+            if (existing == null) return NotFound();
 
-            _context.Entry(user).State = EntityState.Modified;
+            existing.Name = dto.Name;
+            existing.Email = dto.Email;
+            existing.Phone = dto.Phone;
+            existing.Status = dto.Status;
+            existing.UpdatedAt = DateTime.UtcNow;
 
-            try
+            var result = await _repository.PutUserAsync(id, existing);
+
+            if (!result)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                    return NotFound();
-                else
-                    throw;
+                return NotFound();
             }
 
             return NoContent();
@@ -61,31 +64,48 @@ namespace ClinicFlow_Backend.Controllers
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(CreateUserDto dto)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var user = new User
+            {
+                Name = dto.Name,
+                Role = dto.Role,
+                Email = dto.Email,
+                Phone = dto.Phone,
+                PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
+                Status = "Active",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            await _repository.PostUserAsync(user);
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserID }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserID }, MapToDto(user));
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-                return NotFound();
+            var result = await _repository.DeleteUserAsync(id);
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            if(!result)
+            {
+                return NotFound();
+            }
 
             return NoContent();
         }
 
-        private bool UserExists(Guid id)
+        private static UserDto MapToDto(User user) => new UserDto
         {
-            return _context.Users.Any(e => e.UserID == id);
-        }
+            UserID = user.UserID,
+            Name = user.Name,
+            Role = user.Role,
+            Email = user.Email,
+            Phone = user.Phone,
+            Status = user.Status,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt,
+        };
     }
 }
