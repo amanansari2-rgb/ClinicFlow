@@ -1,4 +1,3 @@
-using ClinicFlow_Backend.Data;
 using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
@@ -7,92 +6,153 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow_Backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _repository;
 
-        public UsersController(IUserRepository Repository)
+        private static readonly string[] AllowedRoles =
+            { "Patient", "Clinician", "Scheduler", "Billing", "Admin", "Auditor" };
+
+        private static readonly string[] AllowedStatuses =
+            { "Active", "Inactive", "Locked" };
+
+        public UsersController(IUserRepository repository)
         {
-            _repository = Repository;
+            _repository = repository;
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            var Users =  await _repository.GetUsersAsync();
-            return Ok(Users.Select(u => MapToDto(u)));
-        }
-
-        // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
-        {
-            var user = await _repository.GetUserAsync(id);
-
-            if (user == null)
-                return NotFound();
-
-            return Ok(MapToDto(user));
-        }
-
-        // PUT: api/Users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UpdateUserDto dto)
-        {
-            var existing = await _repository.GetUserAsync(id);
-            if (existing == null) return NotFound();
-
-            existing.Name = dto.Name;
-            existing.Email = dto.Email;
-            existing.Phone = dto.Phone;
-            existing.Status = dto.Status;
-            existing.UpdatedAt = DateTime.UtcNow;
-
-            var result = await _repository.PutUserAsync(id, existing);
-
-            if (!result)
+            try
             {
-                return NotFound();
+                var users = await _repository.GetUsersAsync();
+                return Ok(users.Select(u => MapToDto(u)));
             }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
+        }
 
-            return NoContent();
+        // GET: api/Users/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserDto>> GetUser(Guid id)
+        {
+            try
+            {
+                var user = await _repository.GetUserAsync(id);
+                if (user == null)
+                    return NotFound(new { message = $"User with ID {id} was not found." });
+
+                return Ok(MapToDto(user));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(CreateUserDto dto)
+        public async Task<ActionResult<UserDto>> PostUser(CreateUserDto dto)
         {
-            var user = new User
-            {
-                Name = dto.Name,
-                Role = dto.Role,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-            await _repository.PostUserAsync(user);
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest(new { message = "Name is required." });
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserID }, MapToDto(user));
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                return BadRequest(new { message = "Email is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Password))
+                return BadRequest(new { message = "Password is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Role) || !AllowedRoles.Contains(dto.Role))
+                return BadRequest(new { message = $"Role must be one of: {string.Join(", ", AllowedRoles)}." });
+
+            try
+            {
+                var user = new User
+                {
+                    Name = dto.Name,
+                    Role = dto.Role,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
+                    Status = "Active",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                await _repository.PostUserAsync(user);
+                return CreatedAtAction(nameof(GetUser), new { id = user.UserID }, MapToDto(user));
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict(new { message = "A user with this email already exists." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
-        // DELETE: api/Users/5
+        // PUT: api/Users/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(Guid id, UpdateUserDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest(new { message = "Name is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                return BadRequest(new { message = "Email is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Status) || !AllowedStatuses.Contains(dto.Status))
+                return BadRequest(new { message = $"Status must be one of: {string.Join(", ", AllowedStatuses)}." });
+
+            try
+            {
+                var existing = await _repository.GetUserAsync(id);
+                if (existing == null)
+                    return NotFound(new { message = $"User with ID {id} was not found." });
+
+                existing.Name = dto.Name;
+                existing.Email = dto.Email;
+                existing.Phone = dto.Phone;
+                existing.Status = dto.Status;
+                existing.UpdatedAt = DateTime.UtcNow;
+
+                await _repository.PutUserAsync(id, existing);
+                return NoContent();
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict(new { message = "Update failed — email may already be in use." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
+        }
+
+        // DELETE: api/Users/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var result = await _repository.DeleteUserAsync(id);
-
-            if(!result)
+            try
             {
-                return NotFound();
-            }
+                var result = await _repository.DeleteUserAsync(id);
+                if (!result)
+                    return NotFound(new { message = $"User with ID {id} was not found." });
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         private static UserDto MapToDto(User user) => new UserDto
