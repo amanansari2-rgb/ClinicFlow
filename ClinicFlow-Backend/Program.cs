@@ -1,20 +1,27 @@
 using ClinicFlow_Backend.Data;
+using ClinicFlow_Backend.Repositories.Implementation;
+using ClinicFlow_Backend.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ── Database ──────────────────────────────────────────────────────────────────
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
+// ── Repositories ──────────────────────────────────────────────────────────────
+builder.Services.AddScoped<IUserRepository,         UserRepository>();
+builder.Services.AddScoped<IReportingRepository,    ReportingRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<ITaskRepository,         TaskRepository>();
+
+// ── MVC / Swagger ─────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -22,7 +29,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
