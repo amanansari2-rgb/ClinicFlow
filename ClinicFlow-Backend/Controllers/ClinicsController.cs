@@ -35,21 +35,18 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ClinicDto>> GetClinic(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest("Invalid clinic ID.");
-
             try
             {
                 var clinic = await _repository.GetClinicAsync(id);
 
                 if (clinic == null)
-                    return NotFound($"Clinic with ID {id} not found.");
+                    return NotFound(new { message = $"Clinic with ID {id} was not found." });
 
                 return Ok(MapToDto(clinic));
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the clinic.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while retrieving the clinic." });
             }
         }
 
@@ -83,14 +80,11 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClinic(Guid id, UpdateClinicDto dto)
         {
-            if (id == Guid.Empty)
-                return BadRequest("Invalid clinic ID.");
-
             try
             {
                 var existing = await _repository.GetClinicAsync(id);
                 if (existing == null)
-                    return NotFound($"Clinic with ID {id} not found.");
+                    return NotFound(new { message = $"Clinic with ID {id} was not found." });
 
                 existing.Name = dto.Name;
                 existing.AddressJSON = dto.AddressJSON;
@@ -99,13 +93,13 @@ namespace ClinicFlow_Backend.Controllers
                 var result = await _repository.PutClinicAsync(id, existing);
 
                 if (!result)
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update clinic.");
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to update clinic." });
 
                 return NoContent();
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the clinic.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while updating the clinic." });
             }
         }
 
@@ -113,21 +107,18 @@ namespace ClinicFlow_Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClinic(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest("Invalid clinic ID.");
-
             try
             {
                 var result = await _repository.DeleteClinicAsync(id);
 
                 if (!result)
-                    return NotFound($"Clinic with ID {id} not found.");
+                    return NotFound(new { message = $"Clinic with ID {id} was not found." });
 
                 return NoContent();
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the clinic.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while deleting the clinic." });
             }
         }
 

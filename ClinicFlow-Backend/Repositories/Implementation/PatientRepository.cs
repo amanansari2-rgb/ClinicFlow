@@ -43,7 +43,7 @@ namespace ClinicFlow_Backend.Repositories.Implementation
         }
         public async Task<Patient> PostPatientAsync(Patient patient)
         {
-            _context.AddAsync(patient);
+            await _context.AddAsync(patient);
 
             await _context.SaveChangesAsync();
 
