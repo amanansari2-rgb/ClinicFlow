@@ -1,8 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ClinicFlow_Backend.DTO
 {
     // ─── RESPONSE DTO ─────────────────────────────────────────────────────────
-    // Returned by GET /users and GET /users/{id}
-    // Never exposes PasswordHash
     public class UserDto
     {
         public Guid UserID { get; set; }
@@ -16,25 +16,37 @@ namespace ClinicFlow_Backend.DTO
     }
 
     // ─── CREATE REQUEST DTO ───────────────────────────────────────────────────
-    // Used by POST /users
-    // Accepts plain password — service layer will hash it before saving
     public class CreateUserDto
     {
+        [Required, MaxLength(150)]
         public string Name { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;   // Patient | Clinician | Scheduler | Billing | Admin | Auditor
+
+        [Required, MaxLength(30)]
+        public string Role { get; set; } = string.Empty;
+
+        [Required, EmailAddress, MaxLength(200)]
         public string Email { get; set; } = string.Empty;
+
+        [Required, MinLength(6)]
         public string Password { get; set; } = string.Empty;
+
+        [Phone, MaxLength(20)]
         public string? Phone { get; set; }
     }
 
     // ─── UPDATE REQUEST DTO ───────────────────────────────────────────────────
-    // Used by PUT /users/{id}
-    // Does not allow role or password change here — those are separate operations
     public class UpdateUserDto
     {
+        [Required, MaxLength(150)]
         public string Name { get; set; } = string.Empty;
+
+        [Required, EmailAddress, MaxLength(200)]
         public string Email { get; set; } = string.Empty;
+
+        [Phone, MaxLength(20)]
         public string? Phone { get; set; }
-        public string Status { get; set; } = string.Empty; // Active | Inactive | Locked
+
+        [Required, MaxLength(20)]
+        public string Status { get; set; } = string.Empty;
     }
 }
