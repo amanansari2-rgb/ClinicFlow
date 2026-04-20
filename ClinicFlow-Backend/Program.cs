@@ -10,12 +10,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-<<<<<<< HEAD
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<ISchedulingRepository, SchedulingRepository>();
-=======
 builder.Services.AddScoped<IClinicRepository, ClinicRepository>();
->>>>>>> 7c35a29f35aeac2466518a8215209f56e4f09dd7
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
