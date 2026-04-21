@@ -45,6 +45,10 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var user = await _repository.GetUserAsync(id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (user == null)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 
@@ -69,7 +73,8 @@ namespace ClinicFlow_Backend.Controllers
             if (string.IsNullOrWhiteSpace(dto.Password))
                 return BadRequest(new { message = "Password is required." });
 
-            if (string.IsNullOrWhiteSpace(dto.Role) || !AllowedRoles.Contains(dto.Role))
+            var normalizedRole = AllowedRoles.FirstOrDefault(r => r.Equals(dto.Role, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(dto.Role) || normalizedRole == null)
                 return BadRequest(new { message = $"Role must be one of: {string.Join(", ", AllowedRoles)}." });
 
             try
@@ -77,7 +82,7 @@ namespace ClinicFlow_Backend.Controllers
                 var user = new User
                 {
                     Name = dto.Name,
-                    Role = dto.Role,
+                    Role = normalizedRole,
                     Email = dto.Email,
                     Phone = dto.Phone,
                     PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
@@ -115,6 +120,10 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var existing = await _repository.GetUserAsync(id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (existing == null)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 
@@ -144,6 +153,10 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var result = await _repository.DeleteUserAsync(id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (!result)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 
