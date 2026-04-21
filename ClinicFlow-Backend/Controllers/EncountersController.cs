@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow_Backend.Controllers
 {
-    [Route("api/v1/encounters")]
+    [Route("[Controller]")]
     [ApiController]
     public class EncountersController : ControllerBase
     {
@@ -40,14 +40,11 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EncounterDto>> GetEncounter(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid Encounter ID is required." });
-
             try
             {
                 var encounter = await _repository.GetEncounterAsync(id);
                 if (encounter == null)
-                    return NotFound(new { error = $"Encounter with ID '{id}' not found." });
+                    return NotFound(new { error = $"Encounter with ID '{id}' was not found." });
 
                 return Ok(MapToDto(encounter));
             }
@@ -130,9 +127,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}/orders")]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid Encounter ID is required." });
-
             try
             {
                 var encounter = await _repository.GetEncounterAsync(id);
@@ -152,9 +146,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPost("{id}/orders")]
         public async Task<ActionResult<OrderDto>> PostOrder(Guid id, CreateOrderDto dto)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid Encounter ID is required." });
-
             try
             {
                 var encounter = await _repository.GetEncounterAsync(id);
@@ -192,9 +183,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}/referrals")]
         public async Task<ActionResult<IEnumerable<ReferralDto>>> GetReferrals(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid Encounter ID is required." });
-
             try
             {
                 var encounter = await _repository.GetEncounterAsync(id);
@@ -215,9 +203,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPost("{id}/referrals")]
         public async Task<ActionResult<ReferralDto>> PostReferral(Guid id, CreateReferralDto dto)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid Encounter ID is required." });
-
             try
             {
                 var encounter = await _repository.GetEncounterAsync(id);

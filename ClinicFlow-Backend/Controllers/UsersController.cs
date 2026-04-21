@@ -6,15 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow_Backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _repository;
 
-        public UsersController(IUserRepository Repository)
+        private static readonly string[] AllowedRoles =
+            { "Patient", "Clinician", "Scheduler", "Billing", "Admin", "Auditor" };
+        private static readonly string[] AllowedStatuses =
+            { "Active", "Inactive", "Locked" };
+
+        public UsersController(IUserRepository repository)
         {
-            _repository = Repository;
+            _repository = repository;
         }
 
         // GET: api/Users
@@ -28,7 +33,7 @@ namespace ClinicFlow_Backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to retrieve users.", detail = ex.Message });
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
 
@@ -36,20 +41,18 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUser(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid User ID is required." });
-
             try
             {
                 var user = await _repository.GetUserAsync(id);
+
                 if (user == null)
-                    return NotFound(new { error = $"User with ID '{id}' not found." });
+                    return NotFound(new { message = $"User with ID {id} was not found." });
 
                 return Ok(MapToDto(user));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to retrieve the user.", detail = ex.Message });
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
 
@@ -57,16 +60,30 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDto>> PostUser(CreateUserDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest(new { message = "Name is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                return BadRequest(new { message = "Email is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Password))
+                return BadRequest(new { message = "Password is required." });
+
+            var normalizedRole = AllowedRoles.FirstOrDefault(r => r.Equals(dto.Role, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(dto.Role) || normalizedRole == null)
+                return BadRequest(new { message = $"Role must be one of: {string.Join(", ", AllowedRoles)}." });
+
             try
             {
                 var user = new User
                 {
-                    Name = dto.Name.Trim(),
-                    Role = dto.Role.Trim(),
-                    Email = dto.Email.Trim(),
-                    Phone = dto.Phone?.Trim(),
-                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
-                    Status = "Active",
+                    Name = dto.Name,
+                    Role = normalizedRole,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+
+                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2                    Status = "Active",
+
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -74,13 +91,13 @@ namespace ClinicFlow_Backend.Controllers
                 await _repository.PostUserAsync(user);
                 return CreatedAtAction(nameof(GetUser), new { id = user.UserID }, MapToDto(user));
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
-                return Conflict(new { error = "Could not create user. Possible duplicate email.", detail = ex.InnerException?.Message });
+                return Conflict(new { message = "A user with this email already exists." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to create user.", detail = ex.Message });
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
 
@@ -88,34 +105,38 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(Guid id, UpdateUserDto dto)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid User ID is required." });
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest(new { message = "Name is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                return BadRequest(new { message = "Email is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Status) || !AllowedStatuses.Contains(dto.Status))
+                return BadRequest(new { message = $"Status must be one of: {string.Join(", ", AllowedStatuses)}." });
 
             try
             {
                 var existing = await _repository.GetUserAsync(id);
-                if (existing == null)
-                    return NotFound(new { error = $"User with ID '{id}' not found." });
 
-                existing.Name = dto.Name.Trim();
-                existing.Email = dto.Email.Trim();
-                existing.Phone = dto.Phone?.Trim();
-                existing.Status = dto.Status.Trim();
+                if (existing == null)
+                    return NotFound(new { message = $"User with ID {id} was not found." });
+
+                existing.Name = dto.Name;
+                existing.Email = dto.Email;
+                existing.Phone = dto.Phone;
+                existing.Status = dto.Status;
                 existing.UpdatedAt = DateTime.UtcNow;
 
-                var result = await _repository.PutUserAsync(id, existing);
-                if (!result)
-                    return StatusCode(500, new { error = "Failed to update the user." });
-
+                await _repository.PutUserAsync(id, existing);
                 return NoContent();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
-                return Conflict(new { error = "Could not update user. Possible duplicate email or concurrency conflict.", detail = ex.InnerException?.Message });
+                return Conflict(new { message = "Update failed — email may already be in use." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to update the user.", detail = ex.Message });
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
 
@@ -123,24 +144,18 @@ namespace ClinicFlow_Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { error = "A valid User ID is required." });
-
             try
             {
                 var result = await _repository.DeleteUserAsync(id);
+
                 if (!result)
-                    return NotFound(new { error = $"User with ID '{id}' not found." });
+                    return NotFound(new { message = $"User with ID {id} was not found." });
 
                 return NoContent();
             }
-            catch (DbUpdateException ex)
-            {
-                return Conflict(new { error = "Cannot delete — user is linked to other records.", detail = ex.InnerException?.Message });
-            }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Failed to delete the user.", detail = ex.Message });
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
 

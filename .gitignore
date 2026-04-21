@@ -91,3 +91,9 @@ coverage/
 *.coverage
 *.coveragexml
 *.trx
+
+# Claude / IDE settings
+.claude/
+.cursorrules
+.vs/
+*.user
