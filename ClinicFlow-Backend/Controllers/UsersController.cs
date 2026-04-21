@@ -44,10 +44,7 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var user = await _repository.GetUserAsync(id);
-<<<<<<< HEAD
-=======
 
->>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (user == null)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 
@@ -120,10 +117,7 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var existing = await _repository.GetUserAsync(id);
-<<<<<<< HEAD
-=======
 
->>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (existing == null)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 
@@ -153,10 +147,7 @@ namespace ClinicFlow_Backend.Controllers
             try
             {
                 var result = await _repository.DeleteUserAsync(id);
-<<<<<<< HEAD
-=======
 
->>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
                 if (!result)
                     return NotFound(new { message = $"User with ID {id} was not found." });
 

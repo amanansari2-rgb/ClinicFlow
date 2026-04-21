@@ -1,11 +1,13 @@
 using ClinicFlow_Backend.Data;
+using ClinicFlow_Backend.Repositories.Implementation;
+using ClinicFlow_Backend.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
 builder.Services.AddTransient<IEncounterRepository, EncounterRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -13,7 +15,6 @@ builder.Services.AddTransient<IClinicRepository, ClinicRepository>();
 builder.Services.AddTransient<IPatientRepository, PatientRepository>();
 builder.Services.AddTransient<ISchedulingRepository, SchedulingRepository>();
 
->>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
