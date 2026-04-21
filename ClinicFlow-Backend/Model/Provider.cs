@@ -28,9 +28,6 @@ namespace ClinicFlow_Backend.Model
         // Active | OnLeave | Inactive
 
         // Navigation
-        [ForeignKey(nameof(UserID))]
-        public User User { get; set; } = null!;
-
         public ICollection<Appointment> Appointments { get; set; } = [];
         public ICollection<Encounter> Encounters { get; set; } = [];
         public ICollection<Waitlist> Waitlists { get; set; } = [];

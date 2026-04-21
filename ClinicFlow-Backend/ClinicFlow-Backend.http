@@ -1,6 +1,232 @@
-@ClinicFlow_Backend_HostAddress = http://localhost:5032
+@host = http://localhost:5032
 
-GET {{ClinicFlow_Backend_HostAddress}}/weatherforecast/
+# ─── Seed IDs (from the old SeedController — use these in tests) ─────────────
+@patientId   = aaaaaaaa-0004-0004-0004-000000000004
+@encounterId = aaaaaaaa-0007-0007-0007-000000000007
+@chargeId    = aaaaaaaa-0008-0008-0008-000000000008
+@invoiceId   = aaaaaaaa-0009-0009-0009-000000000009
+@paymentId   = aaaaaaaa-0010-0010-0010-000000000010
+
+
+# ═══════════════════════════════════════════════════════════════
+# USERS
+# ═══════════════════════════════════════════════════════════════
+
+### GET all users
+GET {{host}}/api/Users
 Accept: application/json
+
+###
+
+### GET user by ID
+GET {{host}}/api/Users/aaaaaaaa-0001-0001-0001-000000000001
+Accept: application/json
+
+###
+
+### GET user — bad ID (expect 400)
+GET {{host}}/api/Users/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+### GET user — not found (expect 404)
+GET {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+Accept: application/json
+
+###
+
+### POST create user
+POST {{host}}/api/Users
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "role": "Clinician",
+  "email": "test@clinicflow.dev",
+  "phone": "9999999999",
+  "password": "pass123"
+}
+
+###
+
+### POST create user — null body (expect 400)
+POST {{host}}/api/Users
+Content-Type: application/json
+
+{}
+
+###
+
+### PUT update user
+PUT {{host}}/api/Users/aaaaaaaa-0001-0001-0001-000000000001
+Content-Type: application/json
+
+{
+  "name": "Alice Updated",
+  "email": "alice.updated@clinicflow.test",
+  "phone": "9000000001",
+  "status": "Active"
+}
+
+###
+
+### PUT update user — not found (expect 404)
+PUT {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+Content-Type: application/json
+
+{
+  "name": "Ghost",
+  "email": "ghost@x.com",
+  "phone": "0000000000",
+  "status": "Active"
+}
+
+###
+
+### DELETE user — not found (expect 404)
+DELETE {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+
+###
+
+
+# ═══════════════════════════════════════════════════════════════
+# CHARGES
+# ═══════════════════════════════════════════════════════════════
+
+### GET all charges (page 1)
+GET {{host}}/api/v1/billing/charges?page=1&pageSize=20
+Accept: application/json
+
+###
+
+### GET charges — bad page (expect 400)
+GET {{host}}/api/v1/billing/charges?page=0
+Accept: application/json
+
+###
+
+### POST create charge
+POST {{host}}/api/v1/billing/charges
+Content-Type: application/json
+
+{
+  "encounterID": "{{encounterId}}",
+  "cPTCodesJSON": "[\"99213\"]",
+  "iCDCodesJSON": "[\"Z00.00\"]",
+  "units": 2,
+  "unitPrice": 100.00
+}
+
+###
+
+### PUT update charge
+PUT {{host}}/api/v1/billing/charges/{{chargeId}}
+Content-Type: application/json
+
+{
+  "units": 3,
+  "unitPrice": 120.00,
+  "status": "Approved"
+}
+
+###
+
+### PUT update charge — not found (expect 404)
+PUT {{host}}/api/v1/billing/charges/ffffffff-ffff-ffff-ffff-ffffffffffff
+Content-Type: application/json
+
+{
+  "status": "Approved"
+}
+
+###
+
+### PUT update charge — empty ID (expect 400)
+PUT {{host}}/api/v1/billing/charges/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "status": "Approved"
+}
+
+###
+
+
+# ═══════════════════════════════════════════════════════════════
+# INVOICES
+# ═══════════════════════════════════════════════════════════════
+
+### GET all invoices
+GET {{host}}/api/v1/billing/invoices?page=1&pageSize=20
+Accept: application/json
+
+###
+
+### GET invoice by ID
+GET {{host}}/api/v1/billing/invoices/{{invoiceId}}
+Accept: application/json
+
+###
+
+### GET invoice — not found (expect 404)
+GET {{host}}/api/v1/billing/invoices/ffffffff-ffff-ffff-ffff-ffffffffffff
+Accept: application/json
+
+###
+
+### GET invoice — empty ID (expect 400)
+GET {{host}}/api/v1/billing/invoices/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+### POST create invoice
+POST {{host}}/api/v1/billing/invoices
+Content-Type: application/json
+
+{
+  "patientID": "{{patientId}}",
+  "encounterIDsJSON": "[\"{{encounterId}}\"]",
+  "dueDate": "2025-06-30",
+  "currency": "USD"
+}
+
+###
+
+
+# ═══════════════════════════════════════════════════════════════
+# PAYMENTS
+# ═══════════════════════════════════════════════════════════════
+
+### GET all payments
+GET {{host}}/api/v1/billing/payments?page=1&pageSize=20
+Accept: application/json
+
+###
+
+### POST create payment
+POST {{host}}/api/v1/billing/payments
+Content-Type: application/json
+
+{
+  "invoiceID": "{{invoiceId}}",
+  "patientID": "{{patientId}}",
+  "amount": 75.00,
+  "method": "Card"
+}
+
+###
+
+### POST create payment — bad amount (expect 400)
+POST {{host}}/api/v1/billing/payments
+Content-Type: application/json
+
+{
+  "invoiceID": "{{invoiceId}}",
+  "patientID": "{{patientId}}",
+  "amount": 0,
+  "method": "Card"
+}
 
 ###

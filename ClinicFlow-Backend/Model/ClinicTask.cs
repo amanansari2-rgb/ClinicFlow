@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClinicFlow_Backend.Model
 {
@@ -35,8 +34,5 @@ namespace ClinicFlow_Backend.Model
         public string Status { get; set; } = "Open";
         // Open | InProgress | Completed | Overdue
 
-        // Navigation
-        [ForeignKey(nameof(AssignedTo))]
-        public User AssignedToUser { get; set; } = null!;
     }
 }
