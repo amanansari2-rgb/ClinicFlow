@@ -84,12 +84,17 @@ namespace ClinicFlow_Backend.Controllers
             }
         }
 
+        private static readonly string[] AllowedEncounterStatuses = { "InProgress", "Closed", "Cancelled" };
+
         // PUT: api/v1/encounters/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEncounter(Guid id, UpdateEncounterDto dto)
         {
             if (id == Guid.Empty)
                 return BadRequest(new { error = "A valid Encounter ID is required." });
+
+            if (string.IsNullOrWhiteSpace(dto.Status) || !AllowedEncounterStatuses.Contains(dto.Status))
+                return BadRequest(new { error = $"Status must be one of: {string.Join(", ", AllowedEncounterStatuses)}." });
 
             try
             {

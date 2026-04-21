@@ -82,7 +82,8 @@ namespace ClinicFlow_Backend.Controllers
                     Email = dto.Email,
                     Phone = dto.Phone,
 
-                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2                    Status = "Active",
+                    PasswordHash = dto.Password, // TODO: hash with BCrypt in Week 2
+                    Status = "Active",
 
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -132,7 +133,7 @@ namespace ClinicFlow_Backend.Controllers
             }
             catch (DbUpdateException)
             {
-                return Conflict(new { message = "Update failed — email may already be in use." });
+                return Conflict(new { message = "Update failed ï¿½ email may already be in use." });
             }
             catch (Exception ex)
             {

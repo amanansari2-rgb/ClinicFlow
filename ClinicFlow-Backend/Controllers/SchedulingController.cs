@@ -33,18 +33,32 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("providers")]
         public async Task<ActionResult<IEnumerable<ProviderDto>>> GetProviders()
         {
-            var providers = await _repository.GetProvidersAsync();
-            return Ok(providers.Select(p => MapProvider(p)));
+            try
+            {
+                var providers = await _repository.GetProvidersAsync();
+                return Ok(providers.Select(p => MapProvider(p)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpGet("providers/{id}")]
         public async Task<ActionResult<ProviderDto>> GetProvider(Guid id)
         {
-            var provider = await _repository.GetProviderAsync(id);
-            if (provider == null)
-                return NotFound(new { message = $"Provider with ID {id} was not found." });
+            try
+            {
+                var provider = await _repository.GetProviderAsync(id);
+                if (provider == null)
+                    return NotFound(new { message = $"Provider with ID {id} was not found." });
 
-            return Ok(MapProvider(provider));
+                return Ok(MapProvider(provider));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpPost("providers")]
@@ -133,18 +147,32 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("appointments")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAppointments()
         {
-            var appointments = await _repository.GetAppointmentsAsync();
-            return Ok(appointments.Select(a => MapAppointment(a)));
+            try
+            {
+                var appointments = await _repository.GetAppointmentsAsync();
+                return Ok(appointments.Select(a => MapAppointment(a)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpGet("appointments/{id}")]
         public async Task<ActionResult<AppointmentDto>> GetAppointment(Guid id)
         {
-            var appointment = await _repository.GetAppointmentAsync(id);
-            if (appointment == null)
-                return NotFound(new { message = $"Appointment with ID {id} was not found." });
+            try
+            {
+                var appointment = await _repository.GetAppointmentAsync(id);
+                if (appointment == null)
+                    return NotFound(new { message = $"Appointment with ID {id} was not found." });
 
-            return Ok(MapAppointment(appointment));
+                return Ok(MapAppointment(appointment));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpPost("appointments")]
@@ -240,18 +268,32 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("waitlist")]
         public async Task<ActionResult<IEnumerable<WaitlistDto>>> GetWaitlists()
         {
-            var waitlists = await _repository.GetWaitlistsAsync();
-            return Ok(waitlists.Select(w => MapWaitlist(w)));
+            try
+            {
+                var waitlists = await _repository.GetWaitlistsAsync();
+                return Ok(waitlists.Select(w => MapWaitlist(w)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpGet("waitlist/{id}")]
         public async Task<ActionResult<WaitlistDto>> GetWaitlist(Guid id)
         {
-            var waitlist = await _repository.GetWaitlistAsync(id);
-            if (waitlist == null)
-                return NotFound(new { message = $"Waitlist entry with ID {id} was not found." });
+            try
+            {
+                var waitlist = await _repository.GetWaitlistAsync(id);
+                if (waitlist == null)
+                    return NotFound(new { message = $"Waitlist entry with ID {id} was not found." });
 
-            return Ok(MapWaitlist(waitlist));
+                return Ok(MapWaitlist(waitlist));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpPost("waitlist")]
@@ -338,18 +380,32 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("rooms")]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms()
         {
-            var rooms = await _repository.GetRoomsAsync();
-            return Ok(rooms.Select(r => MapRoom(r)));
+            try
+            {
+                var rooms = await _repository.GetRoomsAsync();
+                return Ok(rooms.Select(r => MapRoom(r)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpGet("rooms/{id}")]
         public async Task<ActionResult<RoomDto>> GetRoom(Guid id)
         {
-            var room = await _repository.GetRoomAsync(id);
-            if (room == null)
-                return NotFound(new { message = $"Room with ID {id} was not found." });
+            try
+            {
+                var room = await _repository.GetRoomAsync(id);
+                if (room == null)
+                    return NotFound(new { message = $"Room with ID {id} was not found." });
 
-            return Ok(MapRoom(room));
+                return Ok(MapRoom(room));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
         }
 
         [HttpPost("rooms")]
