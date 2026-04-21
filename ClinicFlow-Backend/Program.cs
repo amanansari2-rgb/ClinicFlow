@@ -5,14 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-<<<<<<< HEAD
-=======
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPatientRepository, PatientRepository>();
-builder.Services.AddScoped<ISchedulingRepository, SchedulingRepository>();
-builder.Services.AddScoped<IClinicRepository, ClinicRepository>();
+builder.Services.AddTransient<IEncounterRepository, EncounterRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IClinicRepository, ClinicRepository>();
+builder.Services.AddTransient<IPatientRepository, PatientRepository>();
+builder.Services.AddTransient<ISchedulingRepository, SchedulingRepository>();
 
 >>>>>>> 7b12232e8095653a9c764644d3556da562b8726f
 builder.Services.AddControllers();

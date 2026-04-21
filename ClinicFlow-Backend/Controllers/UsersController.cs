@@ -14,7 +14,6 @@ namespace ClinicFlow_Backend.Controllers
 
         private static readonly string[] AllowedRoles =
             { "Patient", "Clinician", "Scheduler", "Billing", "Admin", "Auditor" };
-
         private static readonly string[] AllowedStatuses =
             { "Active", "Inactive", "Locked" };
 
@@ -85,8 +84,9 @@ namespace ClinicFlow_Backend.Controllers
                     Role = normalizedRole,
                     Email = dto.Email,
                     Phone = dto.Phone,
-                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
-                    Status = "Active",
+
+                    PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2                    Status = "Active",
+
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };

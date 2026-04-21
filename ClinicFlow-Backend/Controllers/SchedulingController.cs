@@ -257,6 +257,12 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPost("waitlist")]
         public async Task<ActionResult<WaitlistDto>> PostWaitlist(CreateWaitlistDto dto)
         {
+            if (dto.RequestedWindowStart == default || dto.RequestedWindowEnd == default)
+                return BadRequest(new { message = "RequestedWindowStart and RequestedWindowEnd are required." });
+
+            if (dto.RequestedWindowEnd <= dto.RequestedWindowStart)
+                return BadRequest(new { message = "RequestedWindowEnd must be after RequestedWindowStart." });
+
             try
             {
                 var waitlist = new Waitlist

@@ -58,7 +58,7 @@ namespace ClinicFlow_Backend.Repositories.Implementation
             }
 
             _context.Patients.Remove(patient);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
 
