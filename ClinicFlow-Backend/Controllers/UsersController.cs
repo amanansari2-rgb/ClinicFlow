@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicFlow_Backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -70,7 +70,8 @@ namespace ClinicFlow_Backend.Controllers
             if (string.IsNullOrWhiteSpace(dto.Password))
                 return BadRequest(new { message = "Password is required." });
 
-            if (string.IsNullOrWhiteSpace(dto.Role) || !AllowedRoles.Contains(dto.Role))
+            var normalizedRole = AllowedRoles.FirstOrDefault(r => r.Equals(dto.Role, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(dto.Role) || normalizedRole == null)
                 return BadRequest(new { message = $"Role must be one of: {string.Join(", ", AllowedRoles)}." });
 
             try
@@ -78,7 +79,7 @@ namespace ClinicFlow_Backend.Controllers
                 var user = new User
                 {
                     Name = dto.Name,
-                    Role = dto.Role,
+                    Role = normalizedRole,
                     Email = dto.Email,
                     Phone = dto.Phone,
                     PasswordHash = dto.Password, // TODO: BCrypt.HashPassword() in Week 2
