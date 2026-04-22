@@ -9,15 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
-<<<<<<< HEAD
 builder.Services.AddTransient<IBillingRepository, BillingRepository>();
-=======
+
 builder.Services.AddTransient<IEncounterRepository, EncounterRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IClinicRepository, ClinicRepository>();
 builder.Services.AddTransient<IPatientRepository, PatientRepository>();
 builder.Services.AddTransient<ISchedulingRepository, SchedulingRepository>();
->>>>>>> 54836580c2e51882c35f158202279e826785bafb
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

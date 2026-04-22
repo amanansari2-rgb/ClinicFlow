@@ -8,6 +8,7 @@ namespace ClinicFlow_Backend.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         // ── 5.1 Identity & Access Management ────────────────────────────
+        public DbSet<User> Users { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
 
         // ── 5.2 Patient Registry & Intake ───────────────────────────────
@@ -46,10 +47,23 @@ namespace ClinicFlow_Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // ── User ──────────────────────────────────────────────────────
+            modelBuilder.Entity<User>(e =>
+            {
+                e.HasIndex(x => x.Email).IsUnique();
+                e.Property(x => x.Status).HasDefaultValue("Active");
+                e.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                e.Property(x => x.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
+            });
+
             // ── AuditLog (append-only — no update/delete) ────────────────
             modelBuilder.Entity<AuditLog>(e =>
             {
                 e.Property(x => x.Timestamp).HasDefaultValueSql("GETUTCDATE()");
+                e.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ── Patient ──────────────────────────────────────────────────
@@ -58,6 +72,10 @@ namespace ClinicFlow_Backend.Data
                 e.HasIndex(x => x.MRN).IsUnique();
                 e.Property(x => x.ConsentStatus).HasDefaultValue("Pending");
                 e.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                e.HasOne(x => x.User)
+                 .WithOne()
+                 .HasForeignKey<Patient>(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ── IntakeForm ───────────────────────────────────────────────
@@ -81,6 +99,10 @@ namespace ClinicFlow_Backend.Data
             modelBuilder.Entity<Provider>(e =>
             {
                 e.Property(x => x.MaxDailySlots).HasDefaultValue(20);
+                e.HasOne(x => x.User)
+                 .WithOne()
+                 .HasForeignKey<Provider>(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ── Appointment ──────────────────────────────────────────────
@@ -155,6 +177,10 @@ namespace ClinicFlow_Backend.Data
                  .WithMany(en => en.Orders)
                  .HasForeignKey(x => x.EncounterID)
                  .OnDelete(DeleteBehavior.Restrict);
+                e.HasOne(x => x.OrderedByUser)
+                 .WithMany()
+                 .HasForeignKey(x => x.OrderedBy)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ── Referral ─────────────────────────────────────────────────
@@ -218,6 +244,10 @@ namespace ClinicFlow_Backend.Data
             modelBuilder.Entity<Report>(e =>
             {
                 e.Property(x => x.GeneratedAt).HasDefaultValueSql("GETUTCDATE()");
+                e.HasOne(x => x.GeneratedByUser)
+                 .WithMany()
+                 .HasForeignKey(x => x.GeneratedBy)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ── Notification ─────────────────────────────────────────────
@@ -226,6 +256,10 @@ namespace ClinicFlow_Backend.Data
                 e.Property(x => x.Status).HasDefaultValue("Unread");
                 e.Property(x => x.Severity).HasDefaultValue("Info");
                 e.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                e.HasOne(x => x.User)
+                 .WithMany()
+                 .HasForeignKey(x => x.UserID)
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ── ClinicTask ───────────────────────────────────────────────
@@ -234,6 +268,10 @@ namespace ClinicFlow_Backend.Data
                 e.Property(x => x.Priority).HasDefaultValue("Medium");
                 e.Property(x => x.Status).HasDefaultValue("Open");
                 e.Property(x => x.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                e.HasOne(x => x.AssignedToUser)
+                 .WithMany()
+                 .HasForeignKey(x => x.AssignedTo)
+                 .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

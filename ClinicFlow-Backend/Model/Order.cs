@@ -35,5 +35,8 @@ namespace ClinicFlow_Backend.Model
         // Navigation
         [ForeignKey(nameof(EncounterID))]
         public Encounter Encounter { get; set; } = null!;
+
+        [ForeignKey(nameof(OrderedBy))]
+        public User OrderedByUser { get; set; } = null!;
     }
 }

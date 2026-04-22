@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClinicFlow_Backend.Model
 {
@@ -34,5 +35,8 @@ namespace ClinicFlow_Backend.Model
         public string Status { get; set; } = "Unread";
         // Unread | Read | Dismissed
 
+        // Navigation
+        [ForeignKey(nameof(UserID))]
+        public User User { get; set; } = null!;
     }
 }

@@ -28,7 +28,7 @@ namespace ClinicFlow_Backend.Model
 
         public string? ContactInfoJSON { get; set; }
         // JSON: phone, email, emergency contact
-       
+
         public string? AddressJSON { get; set; }
         // JSON: street, city, state, postal code
 
@@ -42,6 +42,9 @@ namespace ClinicFlow_Backend.Model
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation
+        [ForeignKey(nameof(UserID))]
+        public User User { get; set; } = null!;
+
         public ICollection<IntakeForm> IntakeForms { get; set; } = [];
         public ICollection<Appointment> Appointments { get; set; } = [];
         public ICollection<Encounter> Encounters { get; set; } = [];

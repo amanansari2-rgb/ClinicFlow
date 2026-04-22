@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace ClinicFlow_Backend.Model
 {
     // Named ClinicTask to avoid conflict with System.Threading.Tasks.Task
-    public class ClinicTask
-    {
+    public class ClinicTask    {
         [Key]
         public Guid TaskID { get; set; } = Guid.NewGuid();
 
@@ -25,7 +24,7 @@ namespace ClinicFlow_Backend.Model
         [Required, MaxLength(20)]
         public string Priority { get; set; } = "Medium";
         // Low | Medium | High | Critical
-
+        
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? CompletedAt { get; set; }
@@ -33,6 +32,9 @@ namespace ClinicFlow_Backend.Model
         [Required, MaxLength(20)]
         public string Status { get; set; } = "Open";
         // Open | InProgress | Completed | Overdue
-
+        
+        // Navigation
+        [ForeignKey(nameof(AssignedTo))]
+        public User AssignedToUser { get; set; } = null!;
     }
 }
