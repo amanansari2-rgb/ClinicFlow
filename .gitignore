@@ -55,6 +55,7 @@ secrets.json
 **/secrets.json
 **/*secrets*.json
 **/*secret*.json
+.claude/
 
 # ========================
 # Database
