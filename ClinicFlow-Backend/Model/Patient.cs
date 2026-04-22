@@ -28,7 +28,7 @@ namespace ClinicFlow_Backend.Model
 
         public string? ContactInfoJSON { get; set; }
         // JSON: phone, email, emergency contact
-       
+
         public string? AddressJSON { get; set; }
         // JSON: street, city, state, postal code
 

@@ -1,3 +1,21 @@
+<<<<<<< HEAD
+@host = http://localhost:5032
+
+# ─── Seed IDs (from the old SeedController — use these in tests) ─────────────
+@patientId   = aaaaaaaa-0004-0004-0004-000000000004
+@encounterId = aaaaaaaa-0007-0007-0007-000000000007
+@chargeId    = aaaaaaaa-0008-0008-0008-000000000008
+@invoiceId   = aaaaaaaa-0009-0009-0009-000000000009
+@paymentId   = aaaaaaaa-0010-0010-0010-000000000010
+
+
+# ═══════════════════════════════════════════════════════════════
+# USERS
+# ═══════════════════════════════════════════════════════════════
+
+### GET all users
+GET {{host}}/api/Users
+=======
 ### ═══════════════════════════════════════════════════════════════════════════
 ###  ClinicFlow API – Endpoint Test Suite
 ###  Open in VS Code with the REST Client extension (Ctrl+Shift+P → "REST Client")
@@ -24,10 +42,41 @@
 
 ### 1-A  GET all users
 GET {{host}}/Users
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### GET user by ID
+GET {{host}}/api/Users/aaaaaaaa-0001-0001-0001-000000000001
+Accept: application/json
+
+###
+
+### GET user — bad ID (expect 400)
+GET {{host}}/api/Users/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+### GET user — not found (expect 404)
+GET {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+Accept: application/json
+
+###
+
+### POST create user
+POST {{host}}/api/Users
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "role": "Clinician",
+  "email": "test@clinicflow.dev",
+  "phone": "9999999999",
+  "password": "pass123"
+=======
 ### 1-B  POST create user  →  copy UserID into @userId above
 POST {{host}}/Users
 Content-Type: application/json
@@ -38,10 +87,29 @@ Content-Type: application/json
   "email": "alice.sharma@clinicflow.com",
   "password": "SecurePass1",
   "phone": "555-0101"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+### POST create user — null body (expect 400)
+POST {{host}}/api/Users
+Content-Type: application/json
+
+{}
+
+###
+
+### PUT update user
+PUT {{host}}/api/Users/aaaaaaaa-0001-0001-0001-000000000001
+Content-Type: application/json
+
+{
+  "name": "Alice Updated",
+  "email": "alice.updated@clinicflow.test",
+  "phone": "9000000001",
+=======
 ### 1-C  GET single user
 GET {{host}}/Users/{{userId}}
 Accept: application/json
@@ -56,11 +124,22 @@ Content-Type: application/json
   "name": "Dr. Alice Sharma-Patel",
   "email": "alice.sharma@clinicflow.com",
   "phone": "555-0199",
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
   "status": "Active"
 }
 
 ###
 
+<<<<<<< HEAD
+### PUT update user — not found (expect 404)
+PUT {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+Content-Type: application/json
+
+{
+  "name": "Ghost",
+  "email": "ghost@x.com",
+  "phone": "0000000000",
+=======
 ### 1-E  POST validation error – missing required fields
 POST {{host}}/Users
 Content-Type: application/json
@@ -114,17 +193,37 @@ Content-Type: application/json
 {
   "name": "Downtown Family Clinic – Revised",
   "addressJSON": "{\"street\":\"123 Main St\",\"city\":\"Springfield\",\"state\":\"IL\",\"postal\":\"62701\"}",
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
   "status": "Active"
 }
 
 ###
 
+<<<<<<< HEAD
+### DELETE user — not found (expect 404)
+DELETE {{host}}/api/Users/ffffffff-ffff-ffff-ffff-ffffffffffff
+
+###
+
+
+# ═══════════════════════════════════════════════════════════════
+# CHARGES
+# ═══════════════════════════════════════════════════════════════
+
+### GET all charges (page 1)
+GET {{host}}/api/v1/billing/charges?page=1&pageSize=20
+=======
 ### 2-E  GET non-existent clinic – expect 404
 GET {{host}}/Clinics/00000000-0000-0000-0000-000000000099
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### GET charges — bad page (expect 400)
+GET {{host}}/api/v1/billing/charges?page=0
+=======
 ### 2-F  DELETE clinic  (run last in this section)
 DELETE {{host}}/Clinics/{{clinicId}}
 
@@ -138,10 +237,23 @@ DELETE {{host}}/Clinics/{{clinicId}}
 
 ### 3-A  GET all patients
 GET {{host}}/Patients
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### POST create charge
+POST {{host}}/api/v1/billing/charges
+Content-Type: application/json
+
+{
+  "encounterID": "{{encounterId}}",
+  "cPTCodesJSON": "[\"99213\"]",
+  "iCDCodesJSON": "[\"Z00.00\"]",
+  "units": 2,
+  "unitPrice": 100.00
+=======
 ### 3-B  POST create patient  →  copy PatientID into @patientId above
 POST {{host}}/Patients
 Content-Type: application/json
@@ -155,10 +267,21 @@ Content-Type: application/json
   "contactInfoJSON": "{\"email\":\"bob@example.com\",\"phone\":\"555-2001\"}",
   "addressJSON": "{\"street\":\"456 Oak Ave\",\"city\":\"Springfield\",\"state\":\"IL\",\"postal\":\"62702\"}",
   "insuranceInfoJSON": "{\"provider\":\"BlueCross\",\"memberId\":\"BC123456\"}"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+### PUT update charge
+PUT {{host}}/api/v1/billing/charges/{{chargeId}}
+Content-Type: application/json
+
+{
+  "units": 3,
+  "unitPrice": 120.00,
+  "status": "Approved"
+=======
 ### 3-C  GET single patient
 GET {{host}}/Patients/{{patientId}}
 Accept: application/json
@@ -177,10 +300,19 @@ Content-Type: application/json
   "addressJSON": "{\"street\":\"456 Oak Ave\",\"city\":\"Springfield\",\"state\":\"IL\",\"postal\":\"62702\"}",
   "insuranceInfoJSON": "{\"provider\":\"BlueCross\",\"memberId\":\"BC123456\"}",
   "consentStatus": "Signed"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+### PUT update charge — not found (expect 404)
+PUT {{host}}/api/v1/billing/charges/ffffffff-ffff-ffff-ffff-ffffffffffff
+Content-Type: application/json
+
+{
+  "status": "Approved"
+=======
 ### 3-E  POST validation error – invalid gender
 POST {{host}}/Patients
 Content-Type: application/json
@@ -191,10 +323,19 @@ Content-Type: application/json
   "name": "Test Patient",
   "dob": "1990-01-01",
   "gender": "Unknown"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+### PUT update charge — empty ID (expect 400)
+PUT {{host}}/api/v1/billing/charges/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "status": "Approved"
+=======
 ### 3-F  GET intake forms for patient
 GET {{host}}/Patients/{{patientId}}/intake-forms
 Accept: application/json
@@ -211,10 +352,20 @@ Content-Type: application/json
   "allergiesJSON": "[\"penicillin\"]",
   "medicationsJSON": "[\"lisinopril 10mg\"]",
   "source": "Portal"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+
+# ═══════════════════════════════════════════════════════════════
+# INVOICES
+# ═══════════════════════════════════════════════════════════════
+
+### GET all invoices
+GET {{host}}/api/v1/billing/invoices?page=1&pageSize=20
+=======
 ### 3-H  POST intake form validation error – missing visitReason
 POST {{host}}/Patients/{{patientId}}/intake-forms
 Content-Type: application/json
@@ -241,10 +392,15 @@ DELETE {{host}}/Patients/{{patientId}}
 
 ### 4a-A  GET all providers
 GET {{host}}/Scheduling/providers
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### GET invoice by ID
+GET {{host}}/api/v1/billing/invoices/{{invoiceId}}
+=======
 ### 4a-B  POST create provider  →  copy ProviderID into @providerId above
 ###       Prerequisites: @userId and @clinicId must be set
 POST {{host}}/Scheduling/providers
@@ -262,10 +418,15 @@ Content-Type: application/json
 
 ### 4a-C  GET single provider
 GET {{host}}/Scheduling/providers/{{providerId}}
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### GET invoice — not found (expect 404)
+GET {{host}}/api/v1/billing/invoices/ffffffff-ffff-ffff-ffff-ffffffffffff
+=======
 ### 4a-D  PUT update provider
 PUT {{host}}/Scheduling/providers/{{providerId}}
 Content-Type: application/json
@@ -301,17 +462,34 @@ DELETE {{host}}/Scheduling/providers/{{providerId}}
 
 ### 4b-A  GET all appointments
 GET {{host}}/Scheduling/appointments
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### GET invoice — empty ID (expect 400)
+GET {{host}}/api/v1/billing/invoices/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+### POST create invoice
+POST {{host}}/api/v1/billing/invoices
+=======
 ### 4b-B  POST create appointment  →  copy AppID into @appointmentId above
 ###       Prerequisites: @patientId, @providerId, @clinicId, @userId must be set
 POST {{host}}/Scheduling/appointments
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Content-Type: application/json
 
 {
   "patientID": "{{patientId}}",
+<<<<<<< HEAD
+  "encounterIDsJSON": "[\"{{encounterId}}\"]",
+  "dueDate": "2025-06-30",
+  "currency": "USD"
+=======
   "providerID": "{{providerId}}",
   "clinicID": "{{clinicId}}",
   "scheduledAt": "2026-05-10T09:00:00Z",
@@ -319,16 +497,38 @@ Content-Type: application/json
   "mode": "InPerson",
   "reason": "Follow-up consultation",
   "createdBy": "{{userId}}"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+
+# ═══════════════════════════════════════════════════════════════
+# PAYMENTS
+# ═══════════════════════════════════════════════════════════════
+
+### GET all payments
+GET {{host}}/api/v1/billing/payments?page=1&pageSize=20
+=======
 ### 4b-C  GET single appointment
 GET {{host}}/Scheduling/appointments/{{appointmentId}}
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 Accept: application/json
 
 ###
 
+<<<<<<< HEAD
+### POST create payment
+POST {{host}}/api/v1/billing/payments
+Content-Type: application/json
+
+{
+  "invoiceID": "{{invoiceId}}",
+  "patientID": "{{patientId}}",
+  "amount": 75.00,
+  "method": "Card"
+=======
 ### 4b-D  PUT update appointment
 PUT {{host}}/Scheduling/appointments/{{appointmentId}}
 Content-Type: application/json
@@ -339,10 +539,22 @@ Content-Type: application/json
   "mode": "Telehealth",
   "reason": "Follow-up consultation (rescheduled)",
   "status": "Confirmed"
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###
 
+<<<<<<< HEAD
+### POST create payment — bad amount (expect 400)
+POST {{host}}/api/v1/billing/payments
+Content-Type: application/json
+
+{
+  "invoiceID": "{{invoiceId}}",
+  "patientID": "{{patientId}}",
+  "amount": 0,
+  "method": "Card"
+=======
 ### 4b-E  POST appointment validation error – invalid mode
 POST {{host}}/Scheduling/appointments
 Content-Type: application/json
@@ -598,6 +810,7 @@ Content-Type: application/json
   "fromProvider": "{{providerId}}",
   "toProviderInfoJSON": "{\"name\":\"Dr. Ghost\",\"specialty\":\"Unknown\"}",
   "appointmentID": null
+>>>>>>> 54836580c2e51882c35f158202279e826785bafb
 }
 
 ###

@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
+builder.Services.AddTransient<IBillingRepository, BillingRepository>();
+
 builder.Services.AddTransient<IEncounterRepository, EncounterRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IClinicRepository, ClinicRepository>();
