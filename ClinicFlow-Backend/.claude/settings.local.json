@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run:*)",
+      "Bash(echo \"Server PID: $!\")",
+      "Bash(curl -s http://localhost:5032/swagger/v1/swagger.json)",
+      "Bash(pkill -f \"ClinicFlow-Backend\")",
+      "Bash(echo \"New PID: $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5032/swagger/v1/swagger.json)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 39276 /F)",
+      "Bash(cmd /c \"taskkill /PID 39276 /F\")",
+      "Bash(powershell -Command \"Stop-Process -Id 39276 -Force\")",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s -o /dev/null -w \"Swagger status: %{http_code}\" http://localhost:5032/swagger/v1/swagger.json)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' http://localhost:5032/api/v1/users/8ace40b3-105e-42db-8ba0-dfed122c4f06)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' http://localhost:5032/api/v1/users/00000000-0000-0000-0000-000000000001)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PUT http://localhost:5032/api/v1/users/8ace40b3-105e-42db-8ba0-dfed122c4f06 -H 'Content-Type: application/json' -d '{\"name\":\"Dr. Alice Updated\",\"email\":\"alice2@clinic.com\",\"phone\":\"555-9999\",\"status\":\"Active\"}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X DELETE http://localhost:5032/api/v1/users/8ace40b3-105e-42db-8ba0-dfed122c4f06)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PUT http://localhost:5032/api/v1/tasks/394f39f8-35a5-4546-b8a3-293de7cb6de8 -H 'Content-Type: application/json' -d '{\"assignedTo\":\"8c3bc04f-f18a-434c-8bd7-eb8a1d722307\",\"relatedEntityID\":null,\"description\":\"Updated description\",\"dueDate\":\"2026-06-01T00:00:00Z\",\"priority\":\"Medium\",\"status\":\"InProgress\",\"completedAt\":null}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PATCH http://localhost:5032/api/v1/tasks/394f39f8-35a5-4546-b8a3-293de7cb6de8/complete)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PUT http://localhost:5032/api/v1/tasks/00000000-0000-0000-0000-000000000001 -H 'Content-Type: application/json' -d '{\"assignedTo\":\"8c3bc04f-f18a-434c-8bd7-eb8a1d722307\",\"description\":\"x\",\"dueDate\":\"2026-06-01T00:00:00Z\",\"priority\":\"Low\",\"status\":\"Open\",\"completedAt\":null}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' 'http://localhost:5032/api/v1/notifications?userId=8c3bc04f-f18a-434c-8bd7-eb8a1d722307')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' http://localhost:5032/api/v1/notifications)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PATCH http://localhost:5032/api/v1/notifications/00000000-0000-0000-0000-000000000001/read)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X DELETE http://localhost:5032/api/v1/notifications/00000000-0000-0000-0000-000000000001)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PUT http://localhost:5032/api/v1/kpis/a79c8fbf-50e3-42f7-9634-8cabc79f87c8 -H 'Content-Type: application/json' -d '{\"name\":\"Patient Satisfaction\",\"definition\":\"Updated definition\",\"target\":9.5,\"currentValue\":8.8,\"reportingPeriod\":\"Quarterly\"}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PUT http://localhost:5032/api/v1/kpis/00000000-0000-0000-0000-000000000001 -H 'Content-Type: application/json' -d '{\"name\":\"X\",\"definition\":\"X\",\"target\":1.0,\"currentValue\":1.0,\"reportingPeriod\":\"Monthly\"}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' http://localhost:5032/api/v1/audit-packages)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X POST http://localhost:5032/api/v1/audit-packages -H 'Content-Type: application/json' -d '{\"periodStart\":\"2026-01-01T00:00:00Z\",\"periodEnd\":\"2026-03-31T00:00:00Z\",\"contentsJSON\":\"{\\\\\"items\\\\\":10}\",\"packageURI\":\"http://storage/audit-q1.zip\"}')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X POST http://localhost:5032/api/v1/audit-packages -H 'Content-Type: application/json' -d '{\"periodStart\":\"2026-03-31T00:00:00Z\",\"periodEnd\":\"2026-01-01T00:00:00Z\",\"contentsJSON\":\"{}\",\"packageURI\":\"http://x\"}')",
+      "Bash(xargs -I{} powershell -Command \"Stop-Process -Id {} -Force\")",
+      "Bash(sqlcmd:*)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' 'http://localhost:5032/api/v1/notifications?userId=f121ad7d-e3b8-4135-8fff-671a6f2211b0')",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X PATCH http://localhost:5032/api/v1/notifications/aa000001-0000-0000-0000-000000000001/read)",
+      "Bash(curl -s -w '\\\\n=> HTTP %{http_code}' -X DELETE http://localhost:5032/api/v1/notifications/aa000001-0000-0000-0000-000000000002)"
+    ]
+  }
+}

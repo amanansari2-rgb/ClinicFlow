@@ -8,6 +8,7 @@ namespace ClinicFlow_Backend.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _repository;
@@ -22,9 +23,9 @@ namespace ClinicFlow_Backend.Controllers
             _repository = repository;
         }
 
-        // GET: api/Users
+        // GET api/v1/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             try
             {
@@ -160,16 +161,16 @@ namespace ClinicFlow_Backend.Controllers
             }
         }
 
-        private static UserDto MapToDto(User user) => new UserDto
+        private static UserDto MapToDto(User u) => new()
         {
-            UserID = user.UserID,
-            Name = user.Name,
-            Role = user.Role,
-            Email = user.Email,
-            Phone = user.Phone,
-            Status = user.Status,
-            CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt,
+            UserID    = u.UserID,
+            Name      = u.Name,
+            Role      = u.Role,
+            Email     = u.Email,
+            Phone     = u.Phone,
+            Status    = u.Status,
+            CreatedAt = u.CreatedAt,
+            UpdatedAt = u.UpdatedAt
         };
     }
 }
