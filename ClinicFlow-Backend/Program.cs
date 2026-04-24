@@ -10,12 +10,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
 // ── Repositories ──────────────────────────────────────────────────────────────
-builder.Services.AddScoped<IUserRepository,         UserRepository>();
 builder.Services.AddScoped<IReportingRepository,    ReportingRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ITaskRepository,         TaskRepository>();
 
 // ── MVC / Swagger ─────────────────────────────────────────────────────────────
+builder.Services.AddTransient<IBillingRepository, BillingRepository>();
+
+builder.Services.AddTransient<IEncounterRepository, EncounterRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IClinicRepository, ClinicRepository>();
+builder.Services.AddTransient<IPatientRepository, PatientRepository>();
+builder.Services.AddTransient<ISchedulingRepository, SchedulingRepository>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

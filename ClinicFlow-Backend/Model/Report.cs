@@ -29,8 +29,9 @@ namespace ClinicFlow_Backend.Model
         public string? ReportURI { get; set; }
         // Object storage URI for the exported file
 
-        // Navigation
+        //Navigation
         [ForeignKey(nameof(GeneratedBy))]
         public User GeneratedByUser { get; set; } = null!;
+
     }
 }

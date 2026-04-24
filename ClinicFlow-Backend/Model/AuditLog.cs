@@ -24,10 +24,10 @@ namespace ClinicFlow_Backend.Model
 
         public string? Details { get; set; }
         // JSON payload with before/after state
-
+        
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         // Immutable - no UPDATE or DELETE allowed on this table
-
+        
         // Navigation
         [ForeignKey(nameof(UserID))]
         public User User { get; set; } = null!;
