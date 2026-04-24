@@ -1,6 +1,7 @@
 using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,8 @@ namespace ClinicFlow_Backend.Controllers
 {
     [Route("[Controller]")]
     [ApiController]
+    [Authorize]
+    //[Authorize(Roles = "Admin,Clinician")] // only Clinicians and Admins
     public class EncountersController : ControllerBase
     {
         private readonly IEncounterRepository _repository;

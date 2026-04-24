@@ -1,12 +1,15 @@
 using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicFlow_Backend.Controllers
 {
+    [Route("[controller]")]
     [ApiController]
-    [Route("api/v1/billing")]
+    [Authorize]
+    //[Authorize(Roles = "Admin,Billing")] // only Billing Officers and Admins
     public class BillingController : ControllerBase
     {
         private readonly IBillingRepository _repo;

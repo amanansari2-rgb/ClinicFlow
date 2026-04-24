@@ -1,12 +1,15 @@
 using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicFlow_Backend.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    //[Authorize(Roles = "Admin")] // only Admin configures clinics
     public class ClinicsController : ControllerBase
     {
         private readonly IClinicRepository _repository;
@@ -37,8 +40,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ClinicDto>> GetClinic(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { message = "Invalid clinic ID." });
 
             try
             {
@@ -85,8 +86,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClinic(Guid id, UpdateClinicDto dto)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { message = "Invalid clinic ID." });
 
             if (string.IsNullOrWhiteSpace(dto.Status) || !AllowedClinicStatuses.Contains(dto.Status))
                 return BadRequest(new { message = $"Status must be one of: {string.Join(", ", AllowedClinicStatuses)}." });
@@ -118,8 +117,6 @@ namespace ClinicFlow_Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClinic(Guid id)
         {
-            if (id == Guid.Empty)
-                return BadRequest(new { message = "Invalid clinic ID." });
 
             try
             {

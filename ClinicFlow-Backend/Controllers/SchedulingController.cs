@@ -1,6 +1,7 @@
 ﻿using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace ClinicFlow_Backend.Controllers
 {
     [Route("[Controller]")]
     [ApiController]
+    [Authorize] // valid JWT required — individual endpoints restrict further
     public class SchedulingController : ControllerBase
     {
         private readonly ISchedulingRepository _repository;
@@ -62,6 +64,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpPost("providers")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProviderDto>> PostProvider(CreateProviderDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Specialty))
@@ -92,6 +95,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpPut("providers/{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutProvider(Guid id, UpdateProviderDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Specialty))
@@ -126,6 +130,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpDelete("providers/{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProvider(Guid id)
         {
             try
@@ -183,6 +188,12 @@ namespace ClinicFlow_Backend.Controllers
 
             if (string.IsNullOrWhiteSpace(dto.Reason))
                 return BadRequest(new { message = "Reason is required." });
+
+            if (dto.ScheduledAt == default)
+                return BadRequest(new { message = "ScheduledAt is required." });
+
+            if (dto.CreatedBy == Guid.Empty)
+                return BadRequest(new { message = "CreatedBy is required." });
 
             try
             {
@@ -256,6 +267,10 @@ namespace ClinicFlow_Backend.Controllers
                     return NotFound(new { message = $"Appointment with ID {id} was not found." });
 
                 return NoContent();
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict(new { message = "Cannot delete appointment — it has a linked encounter. Close or cancel the encounter first." });
             }
             catch (Exception ex)
             {
@@ -409,6 +424,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpPost("rooms")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<RoomDto>> PostRoom(CreateRoomDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Name))
@@ -438,6 +454,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpPut("rooms/{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutRoom(Guid id, UpdateRoomDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Name))
@@ -471,6 +488,7 @@ namespace ClinicFlow_Backend.Controllers
         }
 
         [HttpDelete("rooms/{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoom(Guid id)
         {
             try

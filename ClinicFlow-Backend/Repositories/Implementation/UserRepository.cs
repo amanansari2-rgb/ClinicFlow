@@ -15,12 +15,12 @@ namespace ClinicFlow_Backend.Repositories.Implementation
 
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Where(u => u.Status != "Inactive").ToListAsync();
         }
 
         public async Task<User?> GetUserAsync(Guid id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserID == id && u.Status != "Inactive");
         }
 
         public async Task<bool> PutUserAsync(Guid id, User user)
@@ -53,11 +53,12 @@ namespace ClinicFlow_Backend.Repositories.Implementation
 
         public async Task<bool> DeleteUserAsync(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserID == id && u.Status != "Inactive");
             if (user == null)
                 return false;
 
-            _context.Users.Remove(user);
+            user.Status = "Inactive";
+            user.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
         }

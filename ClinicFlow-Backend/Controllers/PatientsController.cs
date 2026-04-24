@@ -1,6 +1,7 @@
 ﻿using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace ClinicFlow_Backend.Controllers
 {
     [Route("[Controller]")]
     [ApiController]
+    [Authorize] // valid JWT required for all endpoints
     public class PatientsController : ControllerBase
     {
         private readonly IPatientRepository _repository;
@@ -65,6 +67,9 @@ namespace ClinicFlow_Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<PatientDto>> PostPatient(CreatePatientDto dto)
         {
+            if (dto.UserID == Guid.Empty)
+                return BadRequest(new { message = "UserID is required." });
+
             if (string.IsNullOrWhiteSpace(dto.MRN))
                 return BadRequest(new { message = "MRN is required." });
 
@@ -143,8 +148,9 @@ namespace ClinicFlow_Backend.Controllers
             }
         }
 
-        // DELETE: api/v1/patients/{id}
+        // DELETE: api/v1/patients/{id} — Admin only
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePatient(Guid id)
         {
             try

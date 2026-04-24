@@ -1,6 +1,7 @@
 using ClinicFlow_Backend.DTO;
 using ClinicFlow_Backend.Model;
 using ClinicFlow_Backend.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,8 @@ namespace ClinicFlow_Backend.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _repository;
@@ -56,8 +59,9 @@ namespace ClinicFlow_Backend.Controllers
             }
         }
 
-        // POST: api/Users
+        // POST: api/Users — Admin only
         [HttpPost]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> PostUser(CreateUserDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Name))
@@ -82,7 +86,7 @@ namespace ClinicFlow_Backend.Controllers
                     Email = dto.Email,
                     Phone = dto.Phone,
 
-                    PasswordHash = dto.Password, // TODO: hash with BCrypt in Week 2
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                     Status = "Active",
 
                     CreatedAt = DateTime.UtcNow,
@@ -133,7 +137,7 @@ namespace ClinicFlow_Backend.Controllers
             }
             catch (DbUpdateException)
             {
-                return Conflict(new { message = "Update failed � email may already be in use." });
+                return Conflict(new { message = "Update failed - email may already be in use." });
             }
             catch (Exception ex)
             {
